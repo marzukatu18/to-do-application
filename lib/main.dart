@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/utils_view.dart';
 
-import 'home_view.dart';
+import 'views/home_view.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -22,9 +24,9 @@ class MyApp extends StatelessWidget {
         ),
       ),
       darkTheme: ThemeData(
-        appBarTheme: const AppBarTheme(
+        appBarTheme:  AppBarTheme(
           backgroundColor: Colors.black,
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: IconThemeData(color: CostomBlue),
           titleTextStyle: TextStyle(
               color: Colors.white, fontWeight: FontWeight.w600, fontSize: 25),
         ),
