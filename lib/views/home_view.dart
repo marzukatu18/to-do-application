@@ -1,15 +1,23 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:todo_app/models/todo.dart';
 import 'package:todo_app/views/create_todo.dart';
 import 'package:todo_app/views/todo_tile_view.dart';
 import 'package:todo_app/utils_view.dart';
 import 'create_todo.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:todo_app/controllers/todo_controller.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);
 
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  final TodoController _todoController = TodoController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,17 +40,32 @@ class HomeView extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView.separated(
-        itemBuilder: (context, index) {
-          return const TodoTileView();
-        },
-        separatorBuilder: (context, index) {
-          return const SizedBox(
-            height: 15,
-          );
-        },
-        itemCount: 5,
-      ),
+      body: FutureBuilder<Todo?>(
+          future: _todoController.getAllTodos(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting &&
+                snapshot.data == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.data == null) {
+              return const Text(
+                'Oops!something went wrong!',
+                style: TextStyle(fontSize: 30),
+              );
+            }
+            return ListView.separated(
+              itemBuilder: (context, index) {
+                return TodoTileView(todo: snapshot.data!.data[index],);
+              },
+              separatorBuilder: (context, index) {
+                return const SizedBox(
+                  height: 15,
+                );
+              },
+              itemCount: snapshot.data!.data.length,
+            );
+          }),
       floatingActionButton: FloatingActionButton(
         child: const Icon(
           Icons.add,
